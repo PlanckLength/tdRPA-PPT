@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tdRPA - 技术驱动机器人流程自动化系统 路演宣讲</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ===== Reset & Base ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            background: #0a0e27;
+        }
+
+        /* ===== Slide Container ===== */
+        .slides-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 80px;
+            opacity: 0;
+            transform: translateX(60px);
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(.4, 0, .2, 1), transform 0.6s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .slide.prev {
+            opacity: 0;
+            transform: translateX(-60px);
+        }
+
+        /* ===== Background Patterns ===== */
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 20% 50%, rgba(30, 64, 175, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .slide>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== Typography ===== */
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            right: 50px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        .tag-blue {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: #fff;
+        }
+
+        h1 {
+            font-size: 52px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+
+        h1 span {
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 34px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 10px;
+        }
+
+        p,
+        li {
+            font-size: 17px;
+            color: #cbd5e1;
+            line-height: 1.8;
+        }
+
+        /* ===== Slide 1: Cover ===== */
+        .cover {
+            text-align: center;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f4e 50%, #0f172a 100%);
+        }
+
+        .cover-logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 24px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .cover-logo svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .cover h1 {
+            font-size: 58px;
+            margin-bottom: 8px;
+        }
+
+        .cover .subtitle {
+            font-size: 22px;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-bottom: 12px;
+            letter-spacing: 4px;
+        }
+
+        .cover .sub2 {
+            font-size: 16px;
+            color: #64748b;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .cover .tagline {
+            font-size: 16px;
+            color: #64748b;
+            letter-spacing: 6px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 24px;
+            margin-top: 10px;
+        }
+
+        .cover .video-badge {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 8px 24px;
+            border-radius: 20px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+            font-size: 14px;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        /* Particle background */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(59, 130, 246, 0.4);
+            border-radius: 50%;
+            animation: particleFloat linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* ===== Slide 2: Overview ===== */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 36px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .overview-left p {
+            font-size: 16px;
+            line-height: 1.9;
+            color: #cbd5e1;
+        }
+
+        .overview-left .highlight-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1));
+            border-left: 4px solid #3b82f6;
+            padding: 14px 18px;
+            border-radius: 0 10px 10px 0;
+            margin-top: 16px;
+            font-size: 15px;
+            color: #93c5fd;
+        }
+
+        .app-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .app-chip {
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            background: rgba(59, 130, 246, 0.12);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            transition: all 0.3s;
+        }
+
+        .app-chip:hover {
+            background: rgba(59, 130, 246, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* ===== Slide 3: Features (4 cards) ===== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .feature-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 16px;
+            padding: 24px 22px;
+            transition: all 0.4s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        .feature-icon.blue {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+        }
+
+        .feature-icon.purple {
+            background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+        }
+
+        .feature-icon.cyan {
+            background: linear-gradient(135deg, #0e7490, #06b6d4);
+        }
+
+        .feature-icon.indigo {
+            background: linear-gradient(135deg, #4338ca, #6366f1);
+        }
+
+        .feature-card h3 {
+            font-size: 17px;
+            margin-bottom: 6px;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.7;
+        }
+
+        /* ===== Slide 4: tdRPA-Creator ===== */
+        .creator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 36px;
+            width: 100%;
+            max-width: 1100px;
+            align-items: center;
+        }
+
+        .creator-left .creator-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .creator-left .creator-title em {
+            font-style: normal;
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .creator-left .creator-desc {
+            font-size: 15px;
+            color: #94a3b8;
+            line-height: 1.9;
+            margin-bottom: 16px;
+        }
+
+        .creator-left .creator-quote {
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(139, 92, 246, 0.08));
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            font-size: 15px;
+            font-style: italic;
+            color: #a5b4fc;
+            line-height: 1.7;
+        }
+
+        .creator-right {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .cr-card {
+            padding: 18px 16px;
+            border-radius: 14px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            transition: all 0.3s;
+        }
+
+        .cr-card:hover {
+            border-color: rgba(99, 102, 241, 0.35);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .cr-card .cr-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .cr-card h4 {
+            font-size: 15px;
+            color: #e2e8f0;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .cr-card p {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        /* ===== Slide 5: Capabilities (hex) ===== */
+        .cap-container {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .hex-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .hex-item {
+            width: 100px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            transition: all 0.4s;
+            cursor: default;
+        }
+
+        .hex-item:hover {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            transform: scale(1.08);
+        }
+
+        .hex-item.center {
+            background: linear-gradient(135deg, #1e40af, #6d28d9);
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .cap-list {
+            flex: 1;
+        }
+
+        .cap-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            transition: all 0.3s;
+        }
+
+        .cap-item:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .cap-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .cap-text h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 2px;
+        }
+
+        .cap-text p {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* ===== Slide 6: Advantages ===== */
+        .adv-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .adv-card {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            border-radius: 16px;
+            padding: 24px 18px;
+            text-align: center;
+            transition: all 0.4s;
+        }
+
+        .adv-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(59, 130, 246, 0.35);
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .adv-card .adv-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            margin: 0 auto 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .adv-card:nth-child(1) .adv-icon {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+        }
+
+        .adv-card:nth-child(2) .adv-icon {
+            background: linear-gradient(135deg, #065f46, #10b981);
+        }
+
+        .adv-card:nth-child(3) .adv-icon {
+            background: linear-gradient(135deg, #92400e, #f59e0b);
+        }
+
+        .adv-card:nth-child(4) .adv-icon {
+            background: linear-gradient(135deg, #7c2d12, #ef4444);
+        }
+
+        .adv-card h3 {
+            font-size: 17px;
+            color: #f1f5f9;
+            margin-bottom: 12px;
+        }
+
+        .adv-card ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .adv-card li {
+            font-size: 12.5px;
+            color: #94a3b8;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            line-height: 1.6;
+        }
+
+        .adv-card li::before {
+            content: '\203A';
+            color: #3b82f6;
+            margin-right: 8px;
+            font-weight: 700;
+        }
+
+        .adv-card li:last-child {
+            border-bottom: none;
+        }
+
+        /* ===== Slide 7: Industries ===== */
+        .industry-hex-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+            max-width: 800px;
+            margin-bottom: 30px;
+        }
+
+        .ind-hex {
+            width: 115px;
+            height: 105px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            transition: all 0.4s;
+            cursor: default;
+        }
+
+        .ind-hex:hover {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            transform: scale(1.1);
+        }
+
+        .ind-subtitle {
+            font-size: 16px;
+            color: #94a3b8;
+            text-align: center;
+            max-width: 700px;
+            letter-spacing: 2px;
+        }
+
+        /* ===== Slide 8: Scenarios ===== */
+        .scenario-container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .scenario-row {
+            display: flex;
+            align-items: stretch;
+            margin-bottom: 12px;
+            gap: 12px;
+        }
+
+        .scenario-label {
+            min-width: 115px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .scenario-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            flex: 1;
+            align-items: center;
+        }
+
+        .scenario-item {
+            padding: 6px 12px;
+            border-radius: 7px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            color: #cbd5e1;
+            font-size: 12.5px;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .scenario-item:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            color: #93c5fd;
+            transform: translateY(-2px);
+        }
+
+        /* ===== Slide 9: Target Audience ===== */
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            width: 100%;
+            max-width: 950px;
+        }
+
+        .audience-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            border-radius: 16px;
+            padding: 28px 22px;
+            text-align: center;
+            transition: all 0.4s;
+        }
+
+        .audience-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(99, 102, 241, 0.35);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .audience-card .aud-emoji {
+            font-size: 40px;
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .audience-card h3 {
+            font-size: 18px;
+            color: #f1f5f9;
+            margin-bottom: 10px;
+        }
+
+        .audience-card p {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.7;
+        }
+
+        .audience-card .aud-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .audience-card .aud-tag {
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(59, 130, 246, 0.1);
+            color: #93c5fd;
+            font-size: 11px;
+            border: 1px solid rgba(59, 130, 246, 0.15);
+        }
+
+        /* ===== Slide 10: Closing ===== */
+        .closing {
+            text-align: center;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f4e 50%, #0f172a 100%);
+        }
+
+        .closing h1 {
+            font-size: 46px;
+            margin-bottom: 16px;
+        }
+
+        .closing .closing-desc {
+            font-size: 19px;
+            color: #94a3b8;
+            max-width: 700px;
+            line-height: 2;
+            margin-bottom: 30px;
+        }
+
+        .closing .cta {
+            display: inline-block;
+            padding: 14px 44px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: #fff;
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            transition: all 0.4s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .closing .cta:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 16px 40px rgba(37, 99, 235, 0.4);
+        }
+
+        .closing-info {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #475569;
+            letter-spacing: 2px;
+        }
+
+        .closing .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item .stat-num {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-item .stat-label {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* ===== Navigation ===== */
+        .nav-controls {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 100;
+        }
+
+        .nav-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .nav-dot.active {
+            background: #3b82f6;
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .nav-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.8);
+            color: #94a3b8;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        /* ===== Progress Bar ===== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            z-index: 100;
+            transition: width 0.4s ease;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 900px) {
+            .slide {
+                padding: 30px 30px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            h2 {
+                font-size: 26px;
+            }
+
+            .overview-grid,
+            .creator-container {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .adv-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .cap-container {
+                flex-direction: column;
+            }
+
+            .audience-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slides-wrapper">
+
+        <!-- ===== Slide 1: 封面 ===== -->
+        <div class="slide cover active" data-index="0">
+            <div class="particles" id="particles"></div>
+            <div class="cover-logo">
+                <svg viewBox="0 0 100 100" fill="none">
+                    <circle cx="50" cy="50" r="45" stroke="url(#grad1)" stroke-width="2" fill="rgba(37,99,235,0.1)" />
+                    <path d="M35 35 L65 35 L65 45 L55 45 L55 70 L45 70 L45 45 L35 45 Z" fill="url(#grad1)" />
+                    <defs>
+                        <linearGradient id="grad1" x1="0" y1="0" x2="100" y2="100">
+                            <stop offset="0%" stop-color="#3b82f6" />
+                            <stop offset="100%" stop-color="#8b5cf6" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <h1><span>tdRPA</span></h1>
+            <div class="subtitle">技术驱动机器人流程自动化系统</div>
+            <p class="sub2">Technology Driven Robotic Process Automation</p>
+            <div class="tagline">告别重复劳动 · 把工作交给 tdRPA，把生活还给自己</div>
+            <div class="video-badge">零门槛 + 专业级 + 极致安全 · 自动化生产力平台</div>
+            <div class="slide-number">01 / 10</div>
+        </div>
+
+        <!-- ===== Slide 2: 产品概述 ===== -->
+        <div class="slide" data-index="1">
+            <span class="tag tag-blue">PRODUCT OVERVIEW</span>
+            <h2>tdRPA 产品概述</h2>
+            <div class="overview-grid">
+                <div class="overview-left">
+                    <p>tdRPA 是一款集<strong style="color:#60a5fa">「零门槛 + 专业级 + 极致安全」</strong>于一体的<strong
+                            style="color:#60a5fa">自动化生产力平台</strong>。通过软件模拟人类在电脑上的操作，按照预设规则自动执行流程任务，将复杂的业务流程简化为"点击"与"拖拽"。
+                    </p>
+                    <div class="highlight-box">
+                        <strong>适用场景：</strong>数据量大、重复度高、规则明确、跨业务系统、高人力成本的业务场景
+                    </div>
+                    <div class="highlight-box" style="margin-top:10px; border-left-color: #8b5cf6;">
+                        <strong>核心理念：</strong>这不仅是一个工具，更是一次工作范式的升级
+                    </div>
+                </div>
+                <div class="overview-right">
+                    <h3 style="margin-bottom: 14px;">核心应用领域</h3>
+                    <div class="app-area">
+                        <div class="app-chip">📊 数据传输</div>
+                        <div class="app-chip">📋 数据整理</div>
+                        <div class="app-chip">⚙️ 执行系统操作</div>
+                        <div class="app-chip">🌐 Web 自动化</div>
+                        <div class="app-chip">📧 邮件处理</div>
+                        <div class="app-chip">📁 文件处理</div>
+                        <div class="app-chip">🔄 基于规则的流程处理</div>
+                        <div class="app-chip">🤖 AI 大模型集成</div>
+                        <div class="app-chip">📈 Excel 自动化</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">02 / 10</div>
+        </div>
+
+        <!-- ===== Slide 3: 核心特点 ===== -->
+        <div class="slide" data-index="2">
+            <span class="tag tag-blue">CORE FEATURES</span>
+            <h2>tdRPA 核心特点</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon blue">🕐</div>
+                    <h3>7×24 小时无休</h3>
+                    <p>全天候运行，24小时不间断执行任务，无需人工值守，确保业务连续性，成为真正的"数字员工"。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon purple">🔒</div>
+                    <h3>非侵入式开发</h3>
+                    <p>基于规则在用户界面进行自动化操作，不影响原有IT基础架构，零侵入部署，拒绝盲写代码。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon cyan">🧩</div>
+                    <h3>零门槛 · 极简开发</h3>
+                    <p>命令原型系统让您无需手写代码，通过点击即可自动生成 Python 代码，参数可见即所得。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon indigo">🔍</div>
+                    <h3>全程可控可追溯</h3>
+                    <p>安全沙箱隔离测试环境，业务流程具有明确的数字化触发指令，不会出现未定义的例外情况。</p>
+                </div>
+            </div>
+            <div class="slide-number">03 / 10</div>
+        </div>
+
+        <!-- ===== Slide 4: tdRPA-Creator 开发工具 ===== -->
+        <div class="slide" data-index="3">
+            <span class="tag tag-blue">DEVELOPMENT TOOL</span>
+            <h2>tdRPA-Creator 交互式开发工具</h2>
+            <div class="creator-container">
+                <div class="creator-left">
+                    <div class="creator-title"><em>交互式代码版</em> RPA 开发工具</div>
+                    <p class="creator-desc">tdRPA-Creator 完美平衡了「简单直观」与「强大专业」，让零基础用户和专业开发者都能高效创建自动化流程。7分钟即可玩转企业级 RPA 自动化。
+                    </p>
+                    <div class="creator-quote">
+                        "复杂的业务流程被简化为'点击'与'拖拽'，拒绝盲写，参数可见即所得"
+                    </div>
+                </div>
+                <div class="creator-right">
+                    <div class="cr-card">
+                        <div class="cr-icon">🎯</div>
+                        <h4>命令原型系统</h4>
+                        <p>独创功能：无需手写代码，通过点击如"Web 自动化 > 创建浏览器"即可自动生成 Python 代码</p>
+                    </div>
+                    <div class="cr-card">
+                        <div class="cr-icon">⚙️</div>
+                        <h4>交互式参数配置</h4>
+                        <p>直观操作面板，网址、路径、等待时间等参数可视化调整，实时预览代码变化</p>
+                    </div>
+                    <div class="cr-card">
+                        <div class="cr-icon">🛡️</div>
+                        <h4>安全沙箱环境</h4>
+                        <p>一键开启测试环境，在隔离窗口中运行机器人，确保不影响已有流程和电脑环境</p>
+                    </div>
+                    <div class="cr-card">
+                        <div class="cr-icon">🐍</div>
+                        <h4>纯 Python 内核</h4>
+                        <p>无缝调用 Pandas、Requests、OpenCV 及 AI 大模型库，专业开发上限极高</p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">04 / 10</div>
+        </div>
+
+        <!-- ===== Slide 5: 六大核心能力 ===== -->
+        <div class="slide" data-index="4">
+            <span class="tag tag-blue">CAPABILITIES</span>
+            <h2>六大核心能力</h2>
+            <div class="cap-container">
+                <div class="hex-grid">
+                    <div class="hex-item">模拟手工<br>操作</div>
+                    <div class="hex-item">基于规则<br>操作</div>
+                    <div class="hex-item">处理重复<br>任务</div>
+                    <div class="hex-item center">tdRPA</div>
+                    <div class="hex-item">非侵入式<br>部署</div>
+                    <div class="hex-item">极简<br>开发</div>
+                    <div class="hex-item" style="visibility:hidden;"></div>
+                    <div class="hex-item">7×24<br>无休</div>
+                    <div class="hex-item" style="visibility:hidden;"></div>
+                </div>
+                <div class="cap-list">
+                    <div class="cap-item">
+                        <div class="cap-num">1</div>
+                        <div class="cap-text">
+                            <h4>模拟手工操作及交互</h4>
+                            <p>执行登录系统、打开菜单、录入数据、查询报表等一系列电脑交互操作</p>
+                        </div>
+                    </div>
+                    <div class="cap-item">
+                        <div class="cap-num">2</div>
+                        <div class="cap-text">
+                            <h4>基于明确的规则操作</h4>
+                            <p>可被数字化的触发指令和输入，流程不会出现例外情况，无人因操作风险</p>
+                        </div>
+                    </div>
+                    <div class="cap-item">
+                        <div class="cap-num">3</div>
+                        <div class="cap-text">
+                            <h4>处理高度可重复任务</h4>
+                            <p>通过命令原型系统辅以 Python 编程，准确无误地自动处理重复人工任务</p>
+                        </div>
+                    </div>
+                    <div class="cap-item">
+                        <div class="cap-num">4</div>
+                        <div class="cap-text">
+                            <h4>非侵入式进行部署</h4>
+                            <p>基于规则在用户界面进行自动化操作，不影响原有IT基础架构</p>
+                        </div>
+                    </div>
+                    <div class="cap-item">
+                        <div class="cap-num">5</div>
+                        <div class="cap-text">
+                            <h4>极简开发，快速上岗</h4>
+                            <p>命令原型 + 交互式参数配置，无适应期，高效解决问题</p>
+                        </div>
+                    </div>
+                    <div class="cap-item">
+                        <div class="cap-num">6</div>
+                        <div class="cap-text">
+                            <h4>全天候 7×24 小时无休</h4>
+                            <p>真正的"数字员工"，24小时不间断运行，持续为业务提供自动化支持</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">05 / 10</div>
+        </div>
+
+        <!-- ===== Slide 6: 产品优势 ===== -->
+        <div class="slide" data-index="5">
+            <span class="tag tag-blue">ADVANTAGES</span>
+            <h2>产品优势</h2>
+            <div class="adv-grid">
+                <div class="adv-card">
+                    <div class="adv-icon">🏗️</div>
+                    <h3>底层架构</h3>
+                    <ul>
+                        <li>国产自主可控</li>
+                        <li>核心基于 Python 生态</li>
+                        <li>可调用 AI 大模型库</li>
+                        <li>安全稳定可靠</li>
+                    </ul>
+                </div>
+                <div class="adv-card">
+                    <div class="adv-icon">💻</div>
+                    <h3>开发环境</h3>
+                    <ul>
+                        <li>tdRPA-Creator 交互式工具</li>
+                        <li>支持 VS Code / PyCharm</li>
+                        <li>提供 RESTful API 接口</li>
+                        <li>暗黑模式 / 智能搜索</li>
+                    </ul>
+                </div>
+                <div class="adv-card">
+                    <div class="adv-icon">🔓</div>
+                    <h3>开放灵活</h3>
+                    <ul>
+                        <li>可集成到 ERP 等系统内部</li>
+                        <li>可嵌入 tdRPA 功能</li>
+                        <li>提供 OEM 贴标服务</li>
+                        <li>可被任意语言调用</li>
+                    </ul>
+                </div>
+                <div class="adv-card">
+                    <div class="adv-icon">🛡️</div>
+                    <h3>私有化部署</h3>
+                    <ul>
+                        <li>可内网环境(离线)运行</li>
+                        <li>安全沙箱隔离测试</li>
+                        <li>流程可打包为 exe 分发</li>
+                        <li>数据安全有保障</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="slide-number">06 / 10</div>
+        </div>
+
+        <!-- ===== Slide 7: 行业覆盖 ===== -->
+        <div class="slide" data-index="6">
+            <span class="tag tag-blue">INDUSTRIES</span>
+            <h2>行业覆盖</h2>
+            <div class="industry-hex-grid">
+                <div class="ind-hex">银行</div>
+                <div class="ind-hex">证券</div>
+                <div class="ind-hex">能源</div>
+                <div class="ind-hex">医药</div>
+                <div class="ind-hex">保险</div>
+                <div class="ind-hex">制造</div>
+                <div class="ind-hex">旅游</div>
+                <div class="ind-hex">零售</div>
+                <div class="ind-hex">地产</div>
+                <div class="ind-hex">政务</div>
+            </div>
+            <p class="ind-subtitle">覆盖金融、制造、能源、医药、政务等多个行业领域，为各行各业提供智能自动化解决方案</p>
+            <div class="slide-number">07 / 10</div>
+        </div>
+
+        <!-- ===== Slide 8: 应用场景 ===== -->
+        <div class="slide" data-index="7">
+            <span class="tag tag-blue">SCENARIOS</span>
+            <h2>应用场景</h2>
+            <div class="scenario-container">
+                <div class="scenario-row">
+                    <div class="scenario-label">💰 财务管理</div>
+                    <div class="scenario-items">
+                        <div class="scenario-item">应收账款</div>
+                        <div class="scenario-item">开票</div>
+                        <div class="scenario-item">采购付款</div>
+                        <div class="scenario-item">订单</div>
+                        <div class="scenario-item">收款</div>
+                        <div class="scenario-item">财务报告</div>
+                        <div class="scenario-item">每日报表自动汇总</div>
+                        <div class="scenario-item">邮件定时发送</div>
+                        <div class="scenario-item">存货盘点</div>
+                    </div>
+                </div>
+                <div class="scenario-row">
+                    <div class="scenario-label">👥 人力资源</div>
+                    <div class="scenario-items">
+                        <div class="scenario-item">入职</div>
+                        <div class="scenario-item">考勤</div>
+                        <div class="scenario-item">人事档案</div>
+                        <div class="scenario-item">福利管理</div>
+                        <div class="scenario-item">薪酬</div>
+                        <div class="scenario-item">员工信息批量录入</div>
+                        <div class="scenario-item">合同自动生成</div>
+                        <div class="scenario-item">教育及培训</div>
+                        <div class="scenario-item">招聘</div>
+                    </div>
+                </div>
+                <div class="scenario-row">
+                    <div class="scenario-label">🛒 电商运营</div>
+                    <div class="scenario-items">
+                        <div class="scenario-item">竞品价格抓取</div>
+                        <div class="scenario-item">库存自动抓取</div>
+                        <div class="scenario-item">数据自动入库</div>
+                        <div class="scenario-item">客户关系</div>
+                        <div class="scenario-item">工作流管理</div>
+                        <div class="scenario-item">舞弊识别</div>
+                        <div class="scenario-item">数据获取</div>
+                        <div class="scenario-item">信息采集</div>
+                    </div>
+                </div>
+                <div class="scenario-row">
+                    <div class="scenario-label">📦 供应链管理</div>
+                    <div class="scenario-items">
+                        <div class="scenario-item">存货管理</div>
+                        <div class="scenario-item">采购需求计划</div>
+                        <div class="scenario-item">合同管理</div>
+                        <div class="scenario-item">询价管理</div>
+                        <div class="scenario-item">订单管理</div>
+                        <div class="scenario-item">物流配送</div>
+                        <div class="scenario-item">退货处理</div>
+                    </div>
+                </div>
+                <div class="scenario-row">
+                    <div class="scenario-label">🖥️ IT 管理</div>
+                    <div class="scenario-items">
+                        <div class="scenario-item">安装</div>
+                        <div class="scenario-item">下载上传备份</div>
+                        <div class="scenario-item">文件管理</div>
+                        <div class="scenario-item">邮件管理</div>
+                        <div class="scenario-item">文件同步</div>
+                        <div class="scenario-item">批处理</div>
+                        <div class="scenario-item">服务器监控</div>
+                        <div class="scenario-item">多平台数据同步</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">08 / 10</div>
+        </div>
+
+        <!-- ===== Slide 9: 目标用户 ===== -->
+        <div class="slide" data-index="8">
+            <span class="tag tag-blue">TARGET AUDIENCE</span>
+            <h2>谁需要 tdRPA？</h2>
+            <div class="audience-grid">
+                <div class="audience-card">
+                    <span class="aud-emoji">👩‍💼</span>
+                    <h3>企业白领</h3>
+                    <p>被重复工作折磨的运营、财务、HR 人员，告别重复劳动，释放创造力</p>
+                    <div class="aud-tags">
+                        <span class="aud-tag">运营专员</span>
+                        <span class="aud-tag">财务人员</span>
+                        <span class="aud-tag">HR</span>
+                        <span class="aud-tag">行政人员</span>
+                    </div>
+                </div>
+                <div class="audience-card">
+                    <span class="aud-emoji">🏢</span>
+                    <h3>中小企业主</h3>
+                    <p>追求效率与成本优化的企业决策者，以"数字员工"替代重复人力成本</p>
+                    <div class="aud-tags">
+                        <span class="aud-tag">降本增效</span>
+                        <span class="aud-tag">数字化转型</span>
+                        <span class="aud-tag">流程标准化</span>
+                    </div>
+                </div>
+                <div class="audience-card">
+                    <span class="aud-emoji">👨‍💻</span>
+                    <h3>Python 开发者</h3>
+                    <p>追求极致开发体验的专业程序员，无缝调用 Pandas、OpenCV、AI 大模型等库</p>
+                    <div class="aud-tags">
+                        <span class="aud-tag">纯 Python 内核</span>
+                        <span class="aud-tag">RESTful API</span>
+                        <span class="aud-tag">上限极高</span>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">09 / 10</div>
+        </div>
+
+        <!-- ===== Slide 10: 结语 ===== -->
+        <div class="slide closing" data-index="9">
+            <div class="particles" id="particles2"></div>
+            <h1><span>场景无限，价值裂变</span></h1>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-num">70%</div>
+                    <div class="stat-label">成本降低</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">5x</div>
+                    <div class="stat-label">效率提升</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">0%</div>
+                    <div class="stat-label">出错率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">7×24h</div>
+                    <div class="stat-label">不间断运行</div>
+                </div>
+            </div>
+            <p class="closing-desc">把工作交给 tdRPA，把生活还给自己<br>数据技术驱动每一刻价值裂变</p>
+            <button class="cta">开启自动化之旅</button>
+            <div class="closing-info">tdRPA — 构建新质生产力，助力社会数字化</div>
+            <div class="slide-number">10 / 10</div>
+        </div>
+
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevBtn">&#8249;</button>
+        <div class="nav-dots" id="navDots"></div>
+        <button class="nav-btn" id="nextBtn">&#8250;</button>
+    </div>
+
+    <script>
+        // ===== Slide Logic =====
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let currentSlide = 0;
+
+        // Create dots
+        const dotsContainer = document.getElementById('navDots');
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('button');
+            dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+            dot.addEventListener('click', () => goToSlide(i));
+            dotsContainer.appendChild(dot);
+        }
+
+        function updateProgress() {
+            document.getElementById('progressBar').style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+        }
+
+        function goToSlide(index) {
+            if (index < 0 || index >= totalSlides || index === currentSlide) return;
+            const direction = index > currentSlide ? 1 : -1;
+
+            // 1. Hide current slide (move it out in the opposite direction)
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].style.transform = direction > 0 ? 'translateX(-60px)' : 'translateX(60px)';
+            slides[currentSlide].style.opacity = '0';
+
+            // 2. Prepare target slide: position it off-screen on the correct side BEFORE making it active
+            slides[index].style.transition = 'none'; // disable transition for instant positioning
+            slides[index].style.transform = direction > 0 ? 'translateX(60px)' : 'translateX(-60px)';
+            slides[index].style.opacity = '0';
+
+            // Force reflow so the instant positioning takes effect
+            slides[index].offsetHeight;
+
+            // 3. Re-enable transition and animate target slide into view
+            slides[index].style.transition = '';
+            slides[index].classList.add('active');
+            slides[index].style.transform = 'translateX(0)';
+            slides[index].style.opacity = '1';
+
+            currentSlide = index;
+
+            // Update dots
+            document.querySelectorAll('.nav-dot').forEach((d, i) => {
+                d.classList.toggle('active', i === currentSlide);
+            });
+            updateProgress();
+
+            // Clean up non-active slides after transition completes
+            setTimeout(() => {
+                slides.forEach((s, i) => {
+                    if (i !== currentSlide) {
+                        s.classList.remove('active', 'prev');
+                        s.style.transform = i > currentSlide ? 'translateX(60px)' : 'translateX(-60px)';
+                        s.style.opacity = '0';
+                    }
+                });
+            }, 700);
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => goToSlide(currentSlide - 1));
+        document.getElementById('nextBtn').addEventListener('click', () => goToSlide(currentSlide + 1));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goToSlide(currentSlide + 1); }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goToSlide(currentSlide - 1); }
+        });
+
+        let touchX = 0;
+        document.addEventListener('touchstart', e => touchX = e.touches[0].clientX);
+        document.addEventListener('touchend', e => {
+            const diff = touchX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 60) diff > 0 ? goToSlide(currentSlide + 1) : goToSlide(currentSlide - 1);
+        });
+
+        function createParticles(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (4 + Math.random() * 8) + 's';
+                p.style.animationDelay = Math.random() * 5 + 's';
+                p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+                container.appendChild(p);
+            }
+        }
+        createParticles('particles');
+        createParticles('particles2');
+        updateProgress();
+    </script>
+</body>
+
+</html>
