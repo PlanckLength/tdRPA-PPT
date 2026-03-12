@@ -943,6 +943,28 @@
                 grid-template-columns: 1fr;
             }
         }
+        .qr-code-container {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qr-code-img {
+            width: 140px;
+            height: 140px;
+            padding: 8px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .qr-label {
+            font-size: 14px;
+            color: #94a3b8;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 
@@ -1349,6 +1371,10 @@
             </div>
             <p class="closing-desc">把工作交给 tdRPA，把生活还给自己<br>数据技术驱动每一刻价值裂变</p>
             <button class="cta">开启自动化之旅</button>
+            <div class="qr-code-container">
+                <img src="wechat_qrcode.png" alt="WeChat QR Code" class="qr-code-img">
+                <div class="qr-label">扫码联系我们</div>
+            </div>
             <div class="closing-info">tdRPA — 构建新质生产力，助力社会数字化</div>
             <div class="slide-number">10 / 10</div>
         </div>
