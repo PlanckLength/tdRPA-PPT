@@ -1685,6 +1685,22 @@
             
             btnZh.addEventListener('click', (e) => { e.stopPropagation(); switchLang('zh'); });
             btnEn.addEventListener('click', (e) => { e.stopPropagation(); switchLang('en'); });
+
+            // IP Geolocation for language default
+            fetch('https://get.geojs.io/v1/ip/country.json')
+                .then(res => res.json())
+                .then(data => {
+                    // If not China (including HK, MO, TW for Chinese), default to English
+                    if (data.country !== 'CN' && data.country !== 'HK' && data.country !== 'MO' && data.country !== 'TW') {
+                        switchLang('en');
+                    }
+                })
+                .catch(err => {
+                    // Fallback to browser language if API blocked
+                    if (!navigator.language.toLowerCase().startsWith('zh')) {
+                        switchLang('en');
+                    }
+                });
         });
         // ===== Slide Logic =====
         const slides = document.querySelectorAll('.slide');
