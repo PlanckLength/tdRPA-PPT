@@ -1597,23 +1597,63 @@
         const textNodes = [];
 
         function initI18n(node) {
-            if (node.nodeType === 3) {
+            if (node.nodeType === 3) { // Text node
                 let text = node.nodeValue.trim();
+                // Check exact match
                 if (text && i18n[text]) {
-                    textNodes.push({ node, zh: text, en: i18n[text], isHtml: false });
-                }
-            } else if (node.nodeType === 1) {
-                if (node.tagName !== "SCRIPT" && node.tagName !== "STYLE") {
-                    let htmlContent = node.innerHTML.trim();
-                    if (i18n[htmlContent]) {
-                        textNodes.push({ node, zh: htmlContent, en: i18n[htmlContent], isHtml: true });
-                        return; // Done for this node tree
-                    }
-                    if (node.tagName === 'TITLE') {
-                        if (i18n[htmlContent]) {
-                            textNodes.push({ node, zh: htmlContent, en: i18n[htmlContent], isHtml: true });
+                    textNodes.push({ node: node, zh: text, en: i18n[text] });
+                } else if (text) {
+                    // Fallback for nodes that might have surrounding whitespace but partial match
+                    for (const [zh_key, en_val] of Object.entries(i18n)) {
+                        if (text === zh_key) {
+                            textNodes.push({ node: node, zh: text, en: en_val });
+                            break;
                         }
                     }
+                }
+            } else if (node.nodeType === 1) { // Element node
+                if (node.tagName !== "SCRIPT" && node.tagName !== "STYLE" && !node.classList.contains('lang-toggle')) {
+                    // Special case for elements where innerHTML was exact matched before (like strong tags mixed with text)
+                    // We need to avoid completely replacing innerHTML as it breaks events.
+                    // Let's just traverse children nicely.
+                    
+                    // Specific complex HTML replacements that were in the original dict
+                    let htmlContent = node.innerHTML.trim();
+                    if (htmlContent === `tdRPA 是一款集<strong style="color:#60a5fa">「零门槛 + 专业级 + 极致安全」</strong>于一体的<strong style="color:#60a5fa">自动化生产力平台</strong>。通过软件模拟人类在电脑上的操作，按照预设规则自动执行流程任务，将复杂的业务流程简化为"点击"与"拖拽"。`) {
+                         textNodes.push({ 
+                             node: node, 
+                             zh: htmlContent, 
+                             en: `tdRPA is an <strong style="color:#60a5fa">automated productivity platform</strong> integrating <strong style="color:#60a5fa">"Zero Threshold + Pro Grade + Extreme Security"</strong>. By simulating human operations on computers, it automatically executes process tasks according to preset rules, simplifying complex business processes into "clicks" and "drags".`,
+                             isHtml: true 
+                         });
+                         return; // Stop traversing children for this node
+                    }
+                    if (htmlContent === `<em>交互式代码版</em> RPA 开发工具`) {
+                         textNodes.push({ 
+                             node: node, 
+                             zh: htmlContent, 
+                             en: `<em>Interactive Code-based</em> RPA IDE`,
+                             isHtml: true 
+                         });
+                         return; 
+                    }
+                    if (htmlContent === `把工作交给 tdRPA，把生活还给自己<br>数据技术驱动每一刻价值裂变`) {
+                         textNodes.push({ 
+                             node: node, 
+                             zh: htmlContent, 
+                             en: `Leave work to tdRPA, give life back to yourself<br>Data technology drives value fission every moment`,
+                             isHtml: true 
+                         });
+                         return; 
+                    }
+                    if (htmlContent === `模拟手工<br>操作`) { textNodes.push({ node: node, zh: htmlContent, en: `Simulate<br>Manual Ops`, isHtml: true }); return; }
+                    if (htmlContent === `基于规则<br>操作`) { textNodes.push({ node: node, zh: htmlContent, en: `Rule-based<br>Ops`, isHtml: true }); return; }
+                    if (htmlContent === `处理重复<br>任务`) { textNodes.push({ node: node, zh: htmlContent, en: `Handle Repetitive<br>Tasks`, isHtml: true }); return; }
+                    if (htmlContent === `非侵入式<br>部署`) { textNodes.push({ node: node, zh: htmlContent, en: `Non-intrusive<br>Deployment`, isHtml: true }); return; }
+                    if (htmlContent === `极简<br>开发`) { textNodes.push({ node: node, zh: htmlContent, en: `Minimalist<br>Dev`, isHtml: true }); return; }
+                    if (htmlContent === `7×24<br>无休`) { textNodes.push({ node: node, zh: htmlContent, en: `7×24<br>Non-stop`, isHtml: true }); return; }
+
+                    // Normal traversal
                     for (let i = 0; i < node.childNodes.length; i++) {
                         initI18n(node.childNodes[i]);
                     }
@@ -1621,7 +1661,6 @@
             }
         }
 
-        // Wait for DOM to load
         document.addEventListener('DOMContentLoaded', () => {
             initI18n(document.body);
             initI18n(document.head);
@@ -1641,15 +1680,13 @@
                         item.node.nodeValue = targetText;
                     }
                 });
-                
-                // Keep html lang attribute correct
                 document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
             }
             
-            btnZh.addEventListener('click', () => switchLang('zh'));
-            btnEn.addEventListener('click', () => switchLang('en'));
+            btnZh.addEventListener('click', (e) => { e.stopPropagation(); switchLang('zh'); });
+            btnEn.addEventListener('click', (e) => { e.stopPropagation(); switchLang('en'); });
         });
-\n        // ===== Slide Logic =====
+        // ===== Slide Logic =====
         const slides = document.querySelectorAll('.slide');
         const totalSlides = slides.length;
         let currentSlide = 0;
